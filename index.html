@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Capaian TKA 2026 Provinsi Aceh</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo-area">
+                <i class="fa-solid fa-chart-pie logo-icon"></i>
+                <div>
+                    <h1>Dashboard TKA 2026 Aceh</h1>
+                    <p>Visualisasi Capaian Literasi & Numerasi per Kab/Kota</p>
+                </div>
+            </div>
+            <div class="badge-source">
+                <i class="fa-solid fa-database"></i> Sumber: tka.kemendikdasmen.go.id
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs container">
+        <button class="tab-btn active" onclick="switchTab('overview')"><i class="fa-solid fa-gauge"></i> Ringkasan Utama</button>
+        <button class="tab-btn" onclick="switchTab('explorer')"><i class="fa-solid fa-map-location-dot"></i> Eksplorasi Kab/Kota</button>
+        <button class="tab-btn" onclick="switchTab('analysis')"><i class="fa-solid fa-lightbulb"></i> Analisis & Rekomendasi</button>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container main-content">
+
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-pane active">
+            <div class="hero-card">
+                <h2>Capaian Makro Provinsi Aceh vs Nasional</h2>
+                <p>Perbandingan hasil Tes Kemampuan Akademik (TKA) 2026 tingkat Provinsi Aceh terhadap standar nasional.</p>
+            </div>
+
+            <div class="grid-2">
+                <!-- SD Card -->
+                <div class="card">
+                    <h3><i class="fa-solid fa-school"></i> Jenjang Sekolah Dasar (SD)</h3>
+                    <div class="stat-row">
+                        <div class="stat-box">
+                            <span class="label">Bahasa Indonesia (Aceh)</span>
+                            <span class="value">53,26</span>
+                            <span class="benchmark">Nasional: 60,35 (-7,09)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Matematika (Aceh)</span>
+                            <span class="value">37,59</span>
+                            <span class="benchmark">Nasional: 43,61 (-6,02)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMP Card -->
+                <div class="card">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Jenjang Sekolah Menengah Pertama (SMP)</h3>
+                    <div class="stat-row">
+                        <div class="stat-box">
+                            <span class="label">Bahasa Indonesia (Aceh)</span>
+                            <span class="value">52,46</span>
+                            <span class="benchmark">Nasional: 62,05 (-9,59)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">Matematika (Aceh)</span>
+                            <span class="value">37,29</span>
+                            <span class="benchmark">Nasional: 40,93 (-3,64)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Overview -->
+            <div class="card mt-4">
+                <h3>Grafik Perbandingan Rerata Provinsi vs Nasional</h3>
+                <div class="chart-container">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: EXPLORER -->
+        <section id="tab-explorer" class="tab-pane">
+            <div class="card">
+                <h2>Eksplorasi Data 23 Kabupaten / Kota</h2>
+                <p>Pilih jenjang dan kabupaten/kota untuk melihat detail capaian nilai.</p>
+                
+                <div class="filter-controls">
+                    <div class="control-group">
+                        <label for="select-level">Pilih Jenjang:</label>
+                        <select id="select-level" onchange="updateExplorer()">
+                            <option value="sd">Sekolah Dasar (SD)</option>
+                            <option value="smp">Sekolah Menengah Pertama (SMP)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="select-regency">Pilih Kabupaten/Kota:</label>
+                        <select id="select-regency" onchange="updateExplorer()">
+                            <!-- Diisi via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Detail Card for Selected Region -->
+                <div class="selected-region-card" id="region-detail-box">
+                    <h3 id="detail-title">Kota Banda Aceh</h3>
+                    <div class="grid-3">
+                        <div class="mini-stat">
+                            <span>Bahasa Indonesia</span>
+                            <h2 id="val-indo">64,40</h2>
+                        </div>
+                        <div class="mini-stat">
+                            <span>Matematika</span>
+                            <h2 id="val-math">42,19</h2>
+                        </div>
+                        <div class="mini-stat">
+                            <span>Status Wilayah</span>
+                            <h4 id="val-status" style="color: var(--primary);">Di Atas Rerata Provinsi</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Table of 23 Regencies -->
+            <div class="card mt-4">
+                <h3 id="table-title">Daftar Lengkap Capaian 23 Kabupaten/Kota (SD)</h3>
+                <div class="table-responsive">
+                    <table id="regency-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Kabupaten/Kota</th>
+                                <th>Bahasa Indonesia</th>
+                                <th>Matematika</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Diisi via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: ANALYSIS -->
+        <section id="tab-analysis" class="tab-pane">
+            <div class="card">
+                <h2>Analisis Komprehensif TKA 2026 Aceh</h2>
+                
+                <div class="analysis-item">
+                    <h3><i class="fa-solid fa-city"></i> 1. Kesenjangan Antar Wilayah (Regional Disparity)</h3>
+                    <p><strong>Dominasi Perkotaan:</strong> Kota Banda Aceh memimpin secara konsisten di jenjang SD dan SMP pada kedua mata pelajaran, serta menjadi satu-satunya wilayah yang melampaui Rerata Nasional untuk Bahasa Indonesia dan Matematika SMP.</p>
+                    <p><strong>Potensi Kabupaten:</strong> Kabupaten Gayo Lues (41,80) dan Aceh Jaya (40,38) pada jenjang SMP menunjukkan hasil numerasi yang menonjol dan berada di atas rerata provinsi, bersaing ketat dengan standar nasional.</p>
+                </div>
+
+                <div class="analysis-item">
+                    <h3><i class="fa-solid fa-book-open"></i> 2. Analisis Mata Pelajaran (Mapel Gap)</h3>
+                    <p><strong>Matematika (Numerasi):</strong> Rata-rata provinsi berada di kisaran 37 poin (SD: 37,59; SMP: 37,29). Kesenjangan Matematika SMP terhadap nasional relatif lebih kecil (-3,64 poin) dibandingkan jenjang SD (-6,02 poin).</p>
+                    <p><strong>Bahasa Indonesia (Literasi):</strong> Nilai secara absolut lebih tinggi, namun memiliki kesenjangan yang cukup lebar terhadap nasional pada jenjang SMP (-9,59 poin).</p>
+                </div>
+
+                <div class="analysis-item">
+                    <h3><i class="fa-solid fa-compass"></i> 3. Rekomendasi Strategis</h3>
+                    <ul>
+                        <li><strong>Mentoring Berbasis Klaster:</strong> Menjadikan Kota Banda Aceh, Sabang, dan Aceh Jaya sebagai hub rujukan praktik terbaik (*best practice*).</li>
+                        <li><strong>Intervensi Numerasi Dini:</strong> Penguatan pemahaman konsep dasar matematika sejak tingkat SD.</li>
+                        <li><strong>Pemerataan Mutu Pengajaran:</strong> Pelatihan terfokus untuk kabupaten/kota dengan skor di bawah rerata provinsi.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer container">
+        <p>&copy; 2026 Dashboard Hasil TKA Provinsi Aceh. Dikembangkan untuk analisis pendidikan.</p>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>
